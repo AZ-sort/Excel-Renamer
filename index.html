@@ -196,10 +196,13 @@
         else if (hasProduct) keyword = "Product";
 
         // New filename
-        const newName = `${brandInput} ${timeLabel} Reach Report by ${keyword} ao ${monthInput} ${yearInput}.xls`
-          .replace(/[^a-z0-9_\- ()]/gi, "_");
+        let safeBase = `${brandInput} ${timeLabel} Reach Report by ${keyword} ao ${monthInput} ${yearInput}`;
+        safeBase = safeBase.replace(/[^a-z0-9_\- ()]/gi, "_"); // sanitize only base name
 
-        XLSX.writeFile(wb, newName);
+        const newName = safeBase + ".xls";
+
+        // Save explicitly as legacy XLS
+        XLSX.writeFile(wb, newName, { bookType: "xls" });
       };
       reader.readAsArrayBuffer(file);
     });
