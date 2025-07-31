@@ -7,6 +7,20 @@
     body { font-family: Arial, sans-serif; text-align: center; margin: 40px; }
     #tool { display: none; }
     #login { margin-top: 100px; }
+    #dropzone {
+      margin: 20px auto;
+      padding: 40px;
+      width: 60%;
+      border: 2px dashed #aaa;
+      border-radius: 10px;
+      color: #555;
+      cursor: pointer;
+    }
+    #dropzone.dragover {
+      background-color: #eef;
+      border-color: #00f;
+      color: #00f;
+    }
   </style>
 </head>
 <body>
@@ -22,7 +36,7 @@
 <!-- Tool (hidden until password correct) -->
 <div id="tool">
   <h2>Excel Renamer Tool</h2>
-  <p>Select files, then choose Brand/Month/Year before processing.</p>
+  <p>Select files by clicking or drag them into the box below.</p>
 
   <label>Brand:</label>
   <select id="brand">
@@ -76,7 +90,9 @@
   <select id="year"></select>
   <br><br>
 
-  <input type="file" id="upload" multiple accept=".xls,.xlsx" />
+  <input type="file" id="upload" multiple accept=".xls,.xlsx" style="display:none;" />
+  <div id="dropzone">Drag & Drop Excel files here, or click to select</div>
+
   <button id="process">Process Files</button>
 </div>
 
@@ -105,6 +121,32 @@
     yearSelect.appendChild(opt);
   }
 
+  // Drag & Drop logic
+  const dropzone = document.getElementById("dropzone");
+  const fileInput = document.getElementById("upload");
+  let droppedFiles = [];
+
+  dropzone.addEventListener("click", () => fileInput.click());
+
+  dropzone.addEventListener("dragover", e => {
+    e.preventDefault();
+    dropzone.classList.add("dragover");
+  });
+  dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+
+  dropzone.addEventListener("drop", e => {
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+    droppedFiles = [...e.dataTransfer.files];
+    dropzone.textContent = droppedFiles.length + " file(s) selected";
+  });
+
+  fileInput.addEventListener("change", e => {
+    droppedFiles = [...e.target.files];
+    dropzone.textContent = droppedFiles.length + " file(s) selected";
+  });
+
+  // Process button
   document.getElementById("process").addEventListener("click", () => {
     const brandInput = document.getElementById("brand").value;
     const monthInput = document.getElementById("month").value;
@@ -115,13 +157,12 @@
       return;
     }
 
-    const files = document.getElementById("upload").files;
-    if (!files.length) {
+    if (!droppedFiles.length) {
       alert("Upload at least one Excel file");
       return;
     }
 
-    [...files].forEach(file => {
+    droppedFiles.forEach(file => {
       const reader = new FileReader();
       reader.onload = e => {
         const data = new Uint8Array(e.target.result);
