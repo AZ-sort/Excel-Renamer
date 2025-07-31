@@ -58,8 +58,23 @@
       padding: 10px;
       width: 100%;
       font-size: 14px;
-      border: 1px solid #ccc;
       border-radius: 6px;
+      border: 1px solid #ccc;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    /* Dropdowns */
+    select {
+      background-color: #F3E7BE;
+      border: 1px solid #e6d79d;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    select:focus {
+      outline: none;
+      border-color: #d5c481;
+      background-color: #fff9e5;
     }
 
     button {
@@ -68,10 +83,13 @@
       font-weight: bold;
       border: none;
       cursor: pointer;
-      transition: background 0.3s;
     }
     button:hover {
       background-color: #e6d79d;
+    }
+
+    input[type=password] {
+      border: 1px solid #ccc;
     }
 
     #loginMessage {
