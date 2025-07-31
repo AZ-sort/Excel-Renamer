@@ -13,7 +13,7 @@
 
     /* Top band */
     header {
-      background-color: #819FB3;
+      background-color: #819FB3; /* main top bar */
       padding: 20px;
       text-align: center;
     }
@@ -37,17 +37,20 @@
     .hidden { display: none; }
 
     #drop-zone {
-      border: 2px dashed #888;
+      border: 2px dashed #F3E7BE;
       padding: 30px;
       text-align: center;
       margin: 20px 0;
       cursor: pointer;
       border-radius: 8px;
-      background: #fafafa;
-      transition: background 0.3s;
+      background: #fdfdfd;
+      transition: background 0.3s, border-color 0.3s;
+      color: #6d6d6d;
+      font-weight: bold;
     }
     #drop-zone:hover {
-      background: #f0f0f0;
+      background: #fff9e5;
+      border-color: #e6d79d;
     }
 
     select, button, input[type=password] {
@@ -60,15 +63,15 @@
     }
 
     button {
-      background-color: #819FB3;
-      color: white;
+      background-color: #F3E7BE;
+      color: #333;
       font-weight: bold;
       border: none;
       cursor: pointer;
       transition: background 0.3s;
     }
     button:hover {
-      background-color: #6d8fa3;
+      background-color: #e6d79d;
     }
 
     #loginMessage {
@@ -145,7 +148,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <script>
-    // Simple password protection
     const PASSWORD = "UML2025";
     function checkPassword() {
       const input = document.getElementById("passwordInput").value;
@@ -162,11 +164,11 @@
     let selectedFiles = [];
 
     dropZone.addEventListener("click", () => fileInput.click());
-    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.style.backgroundColor = "#f0f0f0"; });
-    dropZone.addEventListener("dragleave", e => { e.preventDefault(); dropZone.style.backgroundColor = "#fafafa"; });
+    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.style.backgroundColor = "#fff9e5"; });
+    dropZone.addEventListener("dragleave", e => { e.preventDefault(); dropZone.style.backgroundColor = "#fdfdfd"; });
     dropZone.addEventListener("drop", e => {
       e.preventDefault();
-      dropZone.style.backgroundColor = "#fafafa";
+      dropZone.style.backgroundColor = "#fdfdfd";
       selectedFiles = [...e.dataTransfer.files];
       dropZone.textContent = selectedFiles.length + " file(s) selected";
     });
@@ -175,7 +177,6 @@
       dropZone.textContent = selectedFiles.length + " file(s) selected";
     });
 
-    // Rule detection function
     function detectRules(workbook) {
       const sheetNames = workbook.SheetNames;
       if (sheetNames.length < 2) return { timeLabel: "", keyword: "" };
