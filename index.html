@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Excel Renamer - Protected</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 40px; }
+    #tool { display: none; }
+    #login { margin-top: 100px; }
+  </style>
+</head>
+<body>
+
+<!-- Password screen -->
+<div id="login">
+  <h2>Password Required</h2>
+  <input type="password" id="pw" placeholder="Enter password">
+  <button onclick="checkPw()">Enter</button>
+  <p id="error" style="color:red;"></p>
+</div>
+
+<!-- Tool (hidden until password correct) -->
+<div id="tool">
+  <h2>Excel Renamer Tool</h2>
+  <p>Select files, then choose Brand/Month/Year before processing.</p>
+
+  <label>Brand:</label>
+  <select id="brand">
+    <option value="">-- Select Brand --</option>
+    <option>ULCH GIT</option>
+    <option>ULCH Herbal</option>
+    <option>ULCH Respiratory</option>
+    <option>ULCH Somatics</option>
+    <option>ULCH VIMS</option>
+    <option>Corporate</option>
+    <option>Bone Health</option>
+    <option>Women's Health</option>
+    <option>Pedia Milk</option>
+    <option>Pedia TOTC</option>
+    <option>Pedia Vita</option>
+    <option>Pedia GIT</option>
+    <option>Westmont Acid Neutralizer</option>
+    <option>Westmont Antispasmodics</option>
+    <option>Westmont Liver Protectants</option>
+    <option>Westmont Somatics</option>
+    <option>Westmont Antihistamine</option>
+    <option>ULSSI Beauty Ingestives</option>
+    <option>ULSSI Facial Moisturizer</option>
+    <option>ULSSI Facial Wash</option>
+    <option>ULSSI Feminine Care</option>
+    <option>Hand Body Lotion</option>
+    <option>Soaps</option>
+    <option>Acne Control</option>
+  </select>
+  <br><br>
+
+  <label>Month:</label>
+  <select id="month">
+    <option value="">-- Select Month --</option>
+    <option>January</option>
+    <option>February</option>
+    <option>March</option>
+    <option>April</option>
+    <option>May</option>
+    <option>June</option>
+    <option>July</option>
+    <option>August</option>
+    <option>September</option>
+    <option>October</option>
+    <option>November</option>
+    <option>December</option>
+  </select>
+  <br><br>
+
+  <label>Year:</label>
+  <select id="year"></select>
+  <br><br>
+
+  <input type="file" id="upload" multiple accept=".xls,.xlsx" />
+  <button id="process">Process Files</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+  // Password check
+  function checkPw() {
+    const pw = document.getElementById("pw").value;
+    const correct = "team2025"; // <<< CHANGE THIS PASSWORD
+    if (pw === correct) {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("tool").style.display = "block";
+    } else {
+      document.getElementById("error").textContent = "Wrong password!";
+    }
+  }
+
+  // Populate year dropdown
+  const yearSelect = document.getElementById("year");
+  const currentYear = new Date().getFullYear();
+  for (let y = 2020; y <= 2030; y++) {
+    const opt = document.createElement("option");
+    opt.value = y;
+    opt.textContent = y;
+    if (y === currentYear) opt.selected = true;
+    yearSelect.appendChild(opt);
+  }
+
+  document.getElementById("process").addEventListener("click", () => {
+    const brandInput = document.getElementById("brand").value;
+    const monthInput = document.getElementById("month").value;
+    const yearInput = document.getElementById("year").value;
+
+    if (!brandInput || !monthInput || !yearInput) {
+      alert("Please select Brand, Month, and Year before processing.");
+      return;
+    }
+
+    const files = document.getElementById("upload").files;
+    if (!files.length) {
+      alert("Upload at least one Excel file");
+      return;
+    }
+
+    [...files].forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const data = new Uint8Array(e.target.result);
+        const wb = XLSX.read(data, { type: "array" });
+
+        if (wb.SheetNames.length < 2) {
+          alert(file.name + " has no second sheet.");
+          return;
+        }
+
+        const sheet = wb.Sheets[wb.SheetNames[1]]; // second sheet
+        let headers = [];
+        for (let c = 0; c < 26; c++) { // columns A-Z
+          const cell = sheet[String.fromCharCode(65 + c) + "3"];
+          if (cell && cell.v) headers.push(String(cell.v).toLowerCase());
+        }
+
+        // Monthly or Weekly
+        let timeLabel = "";
+        if (headers.some(h => h.includes("week"))) timeLabel = "Weekly";
+        if (headers.some(h => h.includes("month"))) timeLabel = "Monthly";
+
+        // Keyword: Product / Brand / Copy
+        let keyword = "Product";
+        const hasProduct = headers.includes("product");
+        const hasBrand = headers.includes("brand");
+        const hasCopy = headers.includes("copy");
+
+        if (hasProduct && hasBrand && hasCopy) keyword = "Copy";
+        else if (hasProduct && hasBrand) keyword = "Brand";
+        else if (hasProduct) keyword = "Product";
+
+        // New filename
+        const newName = `${brandInput} ${timeLabel} Reach Report by ${keyword} ao ${monthInput} ${yearInput}.xls`
+          .replace(/[^a-z0-9_\- ()]/gi, "_");
+
+        XLSX.writeFile(wb, newName);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  });
+</script>
+</body>
+</html>
