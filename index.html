@@ -4,83 +4,149 @@
   <meta charset="UTF-8">
   <title>Excel Renamer</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f9f9f9; /* slightly offwhite */
+      color: #333;
+    }
+
+    /* Top band */
+    header {
+      background-color: #819FB3;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    /* Content */
+    main {
+      max-width: 700px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    }
+
     .hidden { display: none; }
+
     #drop-zone {
       border: 2px dashed #888;
       padding: 30px;
       text-align: center;
       margin: 20px 0;
       cursor: pointer;
+      border-radius: 8px;
+      background: #fafafa;
+      transition: background 0.3s;
     }
-    select, button { margin: 10px 0; padding: 8px; }
+    #drop-zone:hover {
+      background: #f0f0f0;
+    }
+
+    select, button, input[type=password] {
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #819FB3;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #6d8fa3;
+    }
+
+    #loginMessage {
+      color: red;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <h2>Excel Renamer</h2>
-  <div id="login">
-    <p>Enter password to continue:</p>
-    <input type="password" id="passwordInput" placeholder="Check La UNI-on for Password">
-    <button onclick="checkPassword()">Login</button>
-    <p id="loginMessage" style="color: red;"></p>
-  </div>
+  <header>
+    <h1>Excel Renamer</h1>
+  </header>
 
-  <div id="app" class="hidden">
-    <h3>Upload and Rename Excel Files</h3>
+  <main>
+    <div id="login">
+      <p>Enter password to continue:</p>
+      <input type="password" id="passwordInput" placeholder="Enter password">
+      <button onclick="checkPassword()">Login</button>
+      <p id="loginMessage"></p>
+    </div>
 
-    <label for="brand">Select Brand:</label><br>
-    <select id="brand">
-      <option>ULCH GIT</option>
-      <option>ULCH Herbal</option>
-      <option>ULCH Respiratory</option>
-      <option>ULCH Somatics</option>
-      <option>ULCH VIMS</option>
-      <option>Corporate</option>
-      <option>Bone Health</option>
-      <option>Women's Health</option>
-      <option>Pedia Milk</option>
-      <option>Pedia TOTC</option>
-      <option>Pedia Vita</option>
-      <option>Pedia GIT</option>
-      <option>Westmont Acid Neutralizer</option>
-      <option>Westmont Antispasmodics</option>
-      <option>Westmont Liver Protectants</option>
-      <option>Westmont Somatics</option>
-      <option>Westmont Antihistamine</option>
-      <option>ULSSI Beauty Ingestives</option>
-      <option>ULSSI Facial Moisturizer</option>
-      <option>ULSSI Facial Wash</option>
-      <option>ULSSI Feminine Care</option>
-      <option>Hand Body Lotion</option>
-      <option>Soaps</option>
-      <option>Acne Control</option>
-    </select><br>
+    <div id="app" class="hidden">
+      <h3>Upload and Rename Excel Files</h3>
 
-    <label for="month">Select Month:</label><br>
-    <select id="month">
-      <option>January</option><option>February</option><option>March</option>
-      <option>April</option><option>May</option><option>June</option>
-      <option>July</option><option>August</option><option>September</option>
-      <option>October</option><option>November</option><option>December</option>
-    </select><br>
+      <label for="brand">Select Brand:</label>
+      <select id="brand">
+        <option>ULCH GIT</option>
+        <option>ULCH Herbal</option>
+        <option>ULCH Respiratory</option>
+        <option>ULCH Somatics</option>
+        <option>ULCH VIMS</option>
+        <option>Corporate</option>
+        <option>Bone Health</option>
+        <option>Women's Health</option>
+        <option>Pedia Milk</option>
+        <option>Pedia TOTC</option>
+        <option>Pedia Vita</option>
+        <option>Pedia GIT</option>
+        <option>Westmont Acid Neutralizer</option>
+        <option>Westmont Antispasmodics</option>
+        <option>Westmont Liver Protectants</option>
+        <option>Westmont Somatics</option>
+        <option>Westmont Antihistamine</option>
+        <option>ULSSI Beauty Ingestives</option>
+        <option>ULSSI Facial Moisturizer</option>
+        <option>ULSSI Facial Wash</option>
+        <option>ULSSI Feminine Care</option>
+        <option>Hand Body Lotion</option>
+        <option>Soaps</option>
+        <option>Acne Control</option>
+      </select>
 
-    <label for="year">Select Year:</label><br>
-    <select id="year">
-      <option>2025</option><option>2024</option><option>2023</option>
-    </select><br>
+      <label for="month">Select Month:</label>
+      <select id="month">
+        <option>January</option><option>February</option><option>March</option>
+        <option>April</option><option>May</option><option>June</option>
+        <option>July</option><option>August</option><option>September</option>
+        <option>October</option><option>November</option><option>December</option>
+      </select>
 
-    <div id="drop-zone">Drag & Drop Excel Files Here<br>or Click to Select</div>
-    <input type="file" id="fileInput" multiple accept=".xls,.xlsx" style="display:none">
-    <button onclick="processFiles()">Rename Files</button>
-    <div id="output"></div>
-  </div>
+      <label for="year">Select Year:</label>
+      <select id="year">
+        <option>2025</option><option>2024</option><option>2023</option>
+      </select>
 
-  <!-- SheetJS library for light parsing -->
+      <div id="drop-zone">Drag & Drop Excel Files Here<br>or Click to Select</div>
+      <input type="file" id="fileInput" multiple accept=".xls,.xlsx" style="display:none">
+      <button onclick="processFiles()">Rename Files</button>
+      <div id="output"></div>
+    </div>
+  </main>
+
+  <!-- SheetJS library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <script>
     // Simple password protection
-    const PASSWORD = "UML2025"; // <-- set password here
+    const PASSWORD = "UML2025";
     function checkPassword() {
       const input = document.getElementById("passwordInput").value;
       if (input === PASSWORD) {
@@ -97,10 +163,10 @@
 
     dropZone.addEventListener("click", () => fileInput.click());
     dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.style.backgroundColor = "#f0f0f0"; });
-    dropZone.addEventListener("dragleave", e => { e.preventDefault(); dropZone.style.backgroundColor = ""; });
+    dropZone.addEventListener("dragleave", e => { e.preventDefault(); dropZone.style.backgroundColor = "#fafafa"; });
     dropZone.addEventListener("drop", e => {
       e.preventDefault();
-      dropZone.style.backgroundColor = "";
+      dropZone.style.backgroundColor = "#fafafa";
       selectedFiles = [...e.dataTransfer.files];
       dropZone.textContent = selectedFiles.length + " file(s) selected";
     });
@@ -115,19 +181,17 @@
       if (sheetNames.length < 2) return { timeLabel: "", keyword: "" };
 
       const ws = workbook.Sheets[sheetNames[1]];
-      const range = XLSX.utils.decode_range("A3:Z3"); // row 3, cols A–Z
+      const range = XLSX.utils.decode_range("A3:Z3");
       let headers = [];
 
       for (let C = range.s.c; C <= range.e.c; ++C) {
-        let cell = ws[XLSX.utils.encode_cell({ r: 2, c: C })]; // row 3 (0-based index 2)
+        let cell = ws[XLSX.utils.encode_cell({ r: 2, c: C })];
         if (cell && cell.v) headers.push(String(cell.v).toLowerCase());
       }
 
-      // Monthly or Weekly
       let timeLabel = headers.some(h => h.includes("week")) ? "Weekly" :
                       headers.some(h => h.includes("month")) ? "Monthly" : "";
 
-      // Keyword: Product / Brand / Copy
       let keyword = "";
       if (headers.includes("product") && headers.includes("copy") && headers.includes("brand")) {
         keyword = "Copy";
@@ -151,18 +215,14 @@
         const reader = new FileReader();
         reader.onload = e => {
           const arrayBuffer = e.target.result;
-
-          // Parse just enough to detect rules
           const workbook = XLSX.read(arrayBuffer, { type: "array" });
           const { timeLabel, keyword } = detectRules(workbook);
 
-          // Build filename
           let safeBase = `${brand} ${timeLabel} Reach Report by ${keyword} ao ${month} ${year}`;
           safeBase = safeBase.replace(/[^a-z0-9_\- ()]/gi, "_");
           const ext = file.name.split('.').pop();
           const newName = safeBase + "." + ext;
 
-          // Clone untouched file
           const blob = new Blob([arrayBuffer], { type: file.type });
           const link = document.createElement("a");
           link.href = URL.createObjectURL(blob);
