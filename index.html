@@ -2,211 +2,176 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Excel Renamer - Protected</title>
+  <title>Excel Renamer</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin: 40px; }
-    #tool { display: none; }
-    #login { margin-top: 100px; }
-    #dropzone {
-      margin: 20px auto;
-      padding: 40px;
-      width: 60%;
-      border: 2px dashed #aaa;
-      border-radius: 10px;
-      color: #555;
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 20px; }
+    .hidden { display: none; }
+    #drop-zone {
+      border: 2px dashed #888;
+      padding: 30px;
+      text-align: center;
+      margin: 20px 0;
       cursor: pointer;
     }
-    #dropzone.dragover {
-      background-color: #eef;
-      border-color: #00f;
-      color: #00f;
-    }
+    select, button { margin: 10px 0; padding: 8px; }
   </style>
 </head>
 <body>
+  <h2>Password Protected Excel Renamer</h2>
+  <div id="login">
+    <p>Enter password to continue:</p>
+    <input type="password" id="passwordInput" placeholder="Password">
+    <button onclick="checkPassword()">Login</button>
+    <p id="loginMessage" style="color: red;"></p>
+  </div>
 
-<!-- Password screen -->
-<div id="login">
-  <h2>Password Required</h2>
-  <input type="password" id="pw" placeholder="Enter password">
-  <button onclick="checkPw()">Enter</button>
-  <p id="error" style="color:red;"></p>
-</div>
+  <div id="app" class="hidden">
+    <h3>Upload and Rename Excel Files</h3>
 
-<!-- Tool (hidden until password correct) -->
-<div id="tool">
-  <h2>Excel Renamer Tool</h2>
-  <p>Select files by clicking or drag them into the box below.</p>
+    <label for="brand">Select Brand:</label><br>
+    <select id="brand">
+      <option>ULCH GIT</option>
+      <option>ULCH Herbal</option>
+      <option>ULCH Respiratory</option>
+      <option>ULCH Somatics</option>
+      <option>ULCH VIMS</option>
+      <option>Corporate</option>
+      <option>Bone Health</option>
+      <option>Women's Health</option>
+      <option>Pedia Milk</option>
+      <option>Pedia TOTC</option>
+      <option>Pedia Vita</option>
+      <option>Pedia GIT</option>
+      <option>Westmont Acid Neutralizer</option>
+      <option>Westmont Antispasmodics</option>
+      <option>Westmont Liver Protectants</option>
+      <option>Westmont Somatics</option>
+      <option>Westmont Antihistamine</option>
+      <option>ULSSI Beauty Ingestives</option>
+      <option>ULSSI Facial Moisturizer</option>
+      <option>ULSSI Facial Wash</option>
+      <option>ULSSI Feminine Care</option>
+      <option>Hand Body Lotion</option>
+      <option>Soaps</option>
+      <option>Acne Control</option>
+    </select><br>
 
-  <label>Brand:</label>
-  <select id="brand">
-    <option value="">-- Select Brand --</option>
-    <option>ULCH GIT</option>
-    <option>ULCH Herbal</option>
-    <option>ULCH Respiratory</option>
-    <option>ULCH Somatics</option>
-    <option>ULCH VIMS</option>
-    <option>Corporate</option>
-    <option>Bone Health</option>
-    <option>Women's Health</option>
-    <option>Pedia Milk</option>
-    <option>Pedia TOTC</option>
-    <option>Pedia Vita</option>
-    <option>Pedia GIT</option>
-    <option>Westmont Acid Neutralizer</option>
-    <option>Westmont Antispasmodics</option>
-    <option>Westmont Liver Protectants</option>
-    <option>Westmont Somatics</option>
-    <option>Westmont Antihistamine</option>
-    <option>ULSSI Beauty Ingestives</option>
-    <option>ULSSI Facial Moisturizer</option>
-    <option>ULSSI Facial Wash</option>
-    <option>ULSSI Feminine Care</option>
-    <option>Hand Body Lotion</option>
-    <option>Soaps</option>
-    <option>Acne Control</option>
-  </select>
-  <br><br>
+    <label for="month">Select Month:</label><br>
+    <select id="month">
+      <option>January</option><option>February</option><option>March</option>
+      <option>April</option><option>May</option><option>June</option>
+      <option>July</option><option>August</option><option>September</option>
+      <option>October</option><option>November</option><option>December</option>
+    </select><br>
 
-  <label>Month:</label>
-  <select id="month">
-    <option value="">-- Select Month --</option>
-    <option>January</option>
-    <option>February</option>
-    <option>March</option>
-    <option>April</option>
-    <option>May</option>
-    <option>June</option>
-    <option>July</option>
-    <option>August</option>
-    <option>September</option>
-    <option>October</option>
-    <option>November</option>
-    <option>December</option>
-  </select>
-  <br><br>
+    <label for="year">Select Year:</label><br>
+    <select id="year">
+      <option>2025</option><option>2024</option><option>2023</option>
+    </select><br>
 
-  <label>Year:</label>
-  <select id="year"></select>
-  <br><br>
+    <div id="drop-zone">Drag & Drop Excel Files Here<br>or Click to Select</div>
+    <input type="file" id="fileInput" multiple accept=".xls,.xlsx" style="display:none">
+    <button onclick="processFiles()">Rename Files</button>
+    <div id="output"></div>
+  </div>
 
-  <input type="file" id="upload" multiple accept=".xls,.xlsx" style="display:none;" />
-  <div id="dropzone">Drag & Drop Excel files here, or click to select</div>
+  <!-- SheetJS library for light parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <button id="process">Process Files</button>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script>
-  // Password check
-  function checkPw() {
-    const pw = document.getElementById("pw").value;
-    const correct = "team2025"; // <<< CHANGE THIS PASSWORD
-    if (pw === correct) {
-      document.getElementById("login").style.display = "none";
-      document.getElementById("tool").style.display = "block";
-    } else {
-      document.getElementById("error").textContent = "Wrong password!";
-    }
-  }
-
-  // Populate year dropdown
-  const yearSelect = document.getElementById("year");
-  const currentYear = new Date().getFullYear();
-  for (let y = 2020; y <= 2030; y++) {
-    const opt = document.createElement("option");
-    opt.value = y;
-    opt.textContent = y;
-    if (y === currentYear) opt.selected = true;
-    yearSelect.appendChild(opt);
-  }
-
-  // Drag & Drop logic
-  const dropzone = document.getElementById("dropzone");
-  const fileInput = document.getElementById("upload");
-  let droppedFiles = [];
-
-  dropzone.addEventListener("click", () => fileInput.click());
-
-  dropzone.addEventListener("dragover", e => {
-    e.preventDefault();
-    dropzone.classList.add("dragover");
-  });
-  dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
-
-  dropzone.addEventListener("drop", e => {
-    e.preventDefault();
-    dropzone.classList.remove("dragover");
-    droppedFiles = [...e.dataTransfer.files];
-    dropzone.textContent = droppedFiles.length + " file(s) selected";
-  });
-
-  fileInput.addEventListener("change", e => {
-    droppedFiles = [...e.target.files];
-    dropzone.textContent = droppedFiles.length + " file(s) selected";
-  });
-
-  // Process button
-  document.getElementById("process").addEventListener("click", () => {
-    const brandInput = document.getElementById("brand").value;
-    const monthInput = document.getElementById("month").value;
-    const yearInput = document.getElementById("year").value;
-
-    if (!brandInput || !monthInput || !yearInput) {
-      alert("Please select Brand, Month, and Year before processing.");
-      return;
+  <script>
+    // Simple password protection
+    const PASSWORD = "yourpassword"; // <-- set password here
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value;
+      if (input === PASSWORD) {
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("app").classList.remove("hidden");
+      } else {
+        document.getElementById("loginMessage").textContent = "Incorrect password";
+      }
     }
 
-    if (!droppedFiles.length) {
-      alert("Upload at least one Excel file");
-      return;
-    }
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("fileInput");
+    let selectedFiles = [];
 
-    droppedFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        const data = new Uint8Array(e.target.result);
-        const wb = XLSX.read(data, { type: "array" });
-
-        if (wb.SheetNames.length < 2) {
-          alert(file.name + " has no second sheet.");
-          return;
-        }
-
-        const sheet = wb.Sheets[wb.SheetNames[1]]; // second sheet
-        let headers = [];
-        for (let c = 0; c < 26; c++) { // columns A-Z
-          const cell = sheet[String.fromCharCode(65 + c) + "3"];
-          if (cell && cell.v) headers.push(String(cell.v).toLowerCase());
-        }
-
-        // Monthly or Weekly
-        let timeLabel = "";
-        if (headers.some(h => h.includes("week"))) timeLabel = "Weekly";
-        if (headers.some(h => h.includes("month"))) timeLabel = "Monthly";
-
-        // Keyword: Product / Brand / Copy
-        let keyword = "Product";
-        const hasProduct = headers.includes("product");
-        const hasBrand = headers.includes("brand");
-        const hasCopy = headers.includes("copy");
-
-        if (hasProduct && hasBrand && hasCopy) keyword = "Copy";
-        else if (hasProduct && hasBrand) keyword = "Brand";
-        else if (hasProduct) keyword = "Product";
-
-        // New filename
-        let safeBase = `${brandInput} ${timeLabel} Reach Report by ${keyword} ao ${monthInput} ${yearInput}`;
-        safeBase = safeBase.replace(/[^a-z0-9_\- ()]/gi, "_"); // sanitize only base name
-
-        const newName = safeBase + ".xls";
-
-        // Save explicitly as legacy XLS
-        XLSX.writeFile(wb, newName, { bookType: "xls" });
-      };
-      reader.readAsArrayBuffer(file);
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.style.backgroundColor = "#f0f0f0"; });
+    dropZone.addEventListener("dragleave", e => { e.preventDefault(); dropZone.style.backgroundColor = ""; });
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropZone.style.backgroundColor = "";
+      selectedFiles = [...e.dataTransfer.files];
+      dropZone.textContent = selectedFiles.length + " file(s) selected";
     });
-  });
-</script>
+    fileInput.addEventListener("change", e => {
+      selectedFiles = [...e.target.files];
+      dropZone.textContent = selectedFiles.length + " file(s) selected";
+    });
+
+    // Rule detection function
+    function detectRules(workbook) {
+      const sheetNames = workbook.SheetNames;
+      if (sheetNames.length < 2) return { timeLabel: "", keyword: "" };
+
+      const ws = workbook.Sheets[sheetNames[1]];
+      const range = XLSX.utils.decode_range("A3:Z3"); // row 3, cols A–Z
+      let headers = [];
+
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        let cell = ws[XLSX.utils.encode_cell({ r: 2, c: C })]; // row 3 (0-based index 2)
+        if (cell && cell.v) headers.push(String(cell.v).toLowerCase());
+      }
+
+      // Monthly or Weekly
+      let timeLabel = headers.some(h => h.includes("week")) ? "Weekly" :
+                      headers.some(h => h.includes("month")) ? "Monthly" : "";
+
+      // Keyword: Product / Brand / Copy
+      let keyword = "";
+      if (headers.includes("product") && headers.includes("copy") && headers.includes("brand")) {
+        keyword = "Copy";
+      } else if (headers.includes("product") && headers.includes("brand")) {
+        keyword = "Brand";
+      } else if (headers.includes("product")) {
+        keyword = "Product";
+      }
+
+      return { timeLabel, keyword };
+    }
+
+    function processFiles() {
+      if (!selectedFiles.length) { alert("Please select files first."); return; }
+
+      const brand = document.getElementById("brand").value;
+      const month = document.getElementById("month").value;
+      const year = document.getElementById("year").value;
+
+      selectedFiles.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const arrayBuffer = e.target.result;
+
+          // Parse just enough to detect rules
+          const workbook = XLSX.read(arrayBuffer, { type: "array" });
+          const { timeLabel, keyword } = detectRules(workbook);
+
+          // Build filename
+          let safeBase = `${brand} ${timeLabel} Reach Report by ${keyword} ao ${month} ${year}`;
+          safeBase = safeBase.replace(/[^a-z0-9_\- ()]/gi, "_");
+          const ext = file.name.split('.').pop();
+          const newName = safeBase + "." + ext;
+
+          // Clone untouched file
+          const blob = new Blob([arrayBuffer], { type: file.type });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = newName;
+          link.click();
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    }
+  </script>
 </body>
 </html>
