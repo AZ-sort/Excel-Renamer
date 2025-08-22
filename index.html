@@ -105,7 +105,7 @@
         <option>ULCH VIMS</option>
         <option>Corporate</option>
         <option>Bone Health</option>
-        <option>Womens Health</option>
+        <option>Women's Health</option>
         <option>Pedia Milk</option>
         <option>Pedia TOTC</option>
         <option>Pedia Vita</option>
@@ -220,7 +220,7 @@
           const { timeLabel, keyword } = detectRules(workbook);
 
           let safeBase = `${brand} ${timeLabel} Reach Report by ${keyword} ao ${month} ${year}`;
-          safeBase = safeBase.replace(/[^a-z0-9_\- ()]/gi, "_");
+          safeBase = safeBase.replace(/[^a-z0-9_\- '’()]/gi, "_");
           const ext = file.name.split('.').pop();
           const newName = safeBase + "." + ext;
 
