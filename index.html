@@ -11,6 +11,7 @@
   :root {
     --cream:      #faf7f2;
     --cream2:     #f2ece2;
+    --white:      #ffffff;
     --black:      #1a1714;
     --text:       #2a2420;
     --muted:      #7a6f68;
@@ -37,14 +38,20 @@
 
   /* NAV */
   nav {
-    position: sticky;
-    top: 0; z-index: 50;
-    background: var(--black);
-    border-bottom: 2px solid var(--terra);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    background: transparent;
     height: 52px;
     display: flex;
     align-items: center;
     padding: 0 40px;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  nav.scrolled {
+    background: var(--black);
+    box-shadow: 0 1px 0 rgba(196,92,58,0.5);
   }
 
   .nav-inner {
@@ -65,11 +72,28 @@
     text-decoration: none;
   }
 
-  .wordmark em {
-    font-style: italic;
-    color: var(--terra-mid);
-    font-weight: 300;
+  .wordmark em { font-style: italic; color: var(--terra-mid); font-weight: 300; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
   }
+
+  .nav-back {
+    font-size: 10px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.15s;
+  }
+
+  .nav-back:hover { color: var(--terra-mid); }
 
   .nav-tag {
     font-size: 10px;
@@ -79,15 +103,49 @@
     color: rgba(255,255,255,0.3);
   }
 
+  /* HERO STRIP */
+  .hero-strip {
+    background: var(--black);
+    padding: 80px 24px 56px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 2px solid var(--terra);
+  }
+
+  .hero-strip-inner {
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-strip-glow {
+    position: absolute;
+    bottom: -120px; right: -120px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(196,92,58,0.2) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+
   /* MAIN */
   main {
     max-width: 680px;
     margin: 0 auto;
-    padding: 56px 24px 96px;
+    padding: 40px 24px 96px;
   }
 
-  /* HEADER */
-  .header { margin-bottom: 32px; }
+  /* ENTRANCE ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-strip .eyebrow  { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.05s both; }
+  .hero-strip h1        { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.15s both; }
+  .hero-strip .header-desc { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.25s both; }
+  .card                 { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.35s both; }
 
   .eyebrow {
     display: flex;
@@ -97,7 +155,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--terra);
+    color: var(--terra-mid);
     margin-bottom: 12px;
   }
 
@@ -106,7 +164,7 @@
     display: block;
     width: 18px;
     height: 1.5px;
-    background: var(--terra);
+    background: var(--terra-mid);
   }
 
   h1 {
@@ -115,19 +173,20 @@
     font-weight: 700;
     line-height: 1.08;
     letter-spacing: -0.02em;
-    color: var(--black);
+    color: var(--white);
     margin-bottom: 8px;
   }
 
-  h1 em {
-    font-style: italic;
-    color: var(--terra);
-    font-weight: 300;
-  }
+  h1 em { font-style: italic; color: var(--terra-mid); font-weight: 300; }
 
   .header-desc {
     font-size: 13px;
-    color: var(--muted);
+    color: rgba(255,255,255,0.4);
+    font-weight: 300;
+    line-height: 1.65;
+  }
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
     font-weight: 300;
     line-height: 1.65;
   }
@@ -175,6 +234,58 @@
   }
 
   input[type="password"]:focus { border-color: var(--terra); }
+
+  /* FILE LIST */
+  .file-list {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .file-list.visible { display: flex; }
+
+  .file-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 12px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    animation: chipIn 0.2s ease both;
+  }
+
+  @keyframes chipIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .file-chip-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .file-chip-remove {
+    color: var(--muted2);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: color 0.12s;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  .file-chip-remove:hover { color: var(--red); }
 
   .btn-login {
     padding: 10px 20px;
@@ -368,19 +479,27 @@
 </head>
 <body>
 
-<nav>
+<nav id="mainNav">
   <div class="nav-inner">
     <a class="wordmark" href="https://az-sort.github.io/HomePage/">az<em>-</em>sort</a>
-    <span class="nav-tag">File utility</span>
+    <div class="nav-right">
+      <a class="nav-back" href="https://az-sort.github.io/HomePage/">← All tools</a>
+      <span class="nav-tag">File utility</span>
+    </div>
   </div>
 </nav>
 
-<main>
-  <div class="header">
+<!-- HERO STRIP -->
+<div class="hero-strip" id="heroStrip">
+  <div class="hero-strip-glow" id="heroGlow"></div>
+  <div class="hero-strip-inner">
     <div class="eyebrow">File utility</div>
-    <h1>Excel <em>Renamer.</em></h1>
+    <h1><em>Excel</em> Renamer.</h1>
     <p class="header-desc">Rename a hundred Excel files in the time it takes to rename one.</p>
   </div>
+</div>
+
+<main>
 
   <div class="card">
 
@@ -454,6 +573,8 @@
         <div class="drop-hint">.xls or .xlsx — click to browse</div>
       </div>
 
+      <div class="file-list" id="fileList"></div>
+
       <button class="btn-rename" onclick="processFiles()">Rename Files →</button>
 
       <div class="output-wrap" id="outputWrap">
@@ -512,7 +633,42 @@
 
   function updateDropLabel() {
     const title = dropZone.querySelector(".drop-title");
-    title.textContent = selectedFiles.length + " file(s) selected";
+    const hint  = dropZone.querySelector(".drop-hint");
+    const list  = document.getElementById("fileList");
+
+    if (selectedFiles.length === 0) {
+      title.textContent = "Drop Excel files here";
+      hint.textContent  = ".xls or .xlsx — click to browse";
+      list.innerHTML    = "";
+      list.className    = "file-list";
+      return;
+    }
+
+    title.textContent = `${selectedFiles.length} file(s) selected`;
+    hint.textContent  = "click to add more";
+
+    list.innerHTML = "";
+    selectedFiles.forEach((file, i) => {
+      const chip = document.createElement("div");
+      chip.className = "file-chip";
+      chip.style.animationDelay = `${i * 40}ms`;
+      chip.innerHTML = `
+        <span class="file-chip-name">${file.name}</span>
+        <button class="file-chip-remove" data-index="${i}" title="Remove">×</button>
+      `;
+      list.appendChild(chip);
+    });
+
+    list.className = "file-list visible";
+
+    list.querySelectorAll(".file-chip-remove").forEach(btn => {
+      btn.addEventListener("click", e => {
+        e.stopPropagation();
+        const idx = parseInt(btn.dataset.index);
+        selectedFiles = selectedFiles.filter((_, i) => i !== idx);
+        updateDropLabel();
+      });
+    });
   }
 
   function detectRules(workbook) {
@@ -575,6 +731,27 @@
     el.className   = "output-msg" + (type ? " " + type : "");
     el.textContent = msg;
   }
+
+  // ── Nav scroll state ─────────────────────────────────
+  const mainNav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    mainNav.classList.toggle('scrolled', window.scrollY > 10);
+  }, { passive: true });
+
+  // ── Parallax on hero glow ────────────────────────────
+  const heroGlow  = document.getElementById('heroGlow');
+  const heroStrip = document.getElementById('heroStrip');
+
+  heroStrip.addEventListener('mousemove', e => {
+    const rect = heroStrip.getBoundingClientRect();
+    const cx = (e.clientX - rect.left) / rect.width;
+    const cy = (e.clientY - rect.top)  / rect.height;
+    heroGlow.style.transform = `translate(${(cx - 0.5) * -36}px, ${(cy - 0.5) * -24}px)`;
+  });
+
+  heroStrip.addEventListener('mouseleave', () => {
+    heroGlow.style.transform = 'translate(0,0)';
+  });
 </script>
 </body>
 </html>
